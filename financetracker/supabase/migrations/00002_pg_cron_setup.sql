@@ -1,0 +1,18 @@
+-- NOTE: pg_cron and pg_net must be enabled in Supabase Dashboard > Database > Extensions
+-- This migration sets up the cron job to call the monthly-summary edge function
+
+-- Uncomment and modify after deploying the edge function:
+-- select cron.schedule(
+--   'monthly-summary-job',
+--   '1 0 1 * *',
+--   $$
+--   select net.http_post(
+--     url := 'https://YOUR_PROJECT.supabase.co/functions/v1/monthly-summary',
+--     headers := jsonb_build_object(
+--       'Authorization', 'Bearer YOUR_SERVICE_ROLE_KEY',
+--       'Content-Type', 'application/json'
+--     ),
+--     body := '{}'::jsonb
+--   ) as request_id;
+--   $$
+-- );
