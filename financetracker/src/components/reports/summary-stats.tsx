@@ -1,7 +1,6 @@
 "use client";
 
 import { formatCurrency } from "@/lib/format";
-import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, TrendingDown, PiggyBank } from "lucide-react";
 
 interface SummaryStatsProps {
@@ -22,42 +21,66 @@ export function SummaryStats({
       label: "รายรับ",
       value: income,
       icon: TrendingUp,
-      color: "text-success",
-      bgColor: "bg-success/20",
+      color: "#22c55e",
+      bgColor: "rgba(34,197,94,0.2)",
     },
     {
       label: "รายจ่าย",
       value: expense,
       icon: TrendingDown,
-      color: "text-danger",
-      bgColor: "bg-danger/20",
+      color: "#ef4444",
+      bgColor: "rgba(239,68,68,0.2)",
     },
     {
       label: "เงินออม",
       value: net,
       icon: PiggyBank,
-      color: net >= 0 ? "text-accent" : "text-danger",
-      bgColor: net >= 0 ? "bg-accent/20" : "bg-danger/20",
+      color: net >= 0 ? "#a855f7" : "#ef4444",
+      bgColor: net >= 0 ? "rgba(168,85,247,0.2)" : "rgba(239,68,68,0.2)",
     },
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="rounded-xl bg-bg-card border border-border p-3 text-center"
+          style={{
+            background: "#131320",
+            border: "1px solid #2a2a4a",
+            borderRadius: "16px",
+            padding: "16px",
+            textAlign: "center",
+          }}
         >
           <div
-            className={`w-8 h-8 rounded-full ${stat.bgColor} flex items-center justify-center mx-auto mb-2`}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: stat.bgColor,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 8px",
+            }}
           >
-            <stat.icon className={`w-4 h-4 ${stat.color}`} />
+            <stat.icon style={{ width: 16, height: 16, color: stat.color }} />
           </div>
-          <p className="text-[10px] text-text-secondary mb-1">{stat.label}</p>
+          <p style={{ fontSize: "10px", color: "#94a3b8", marginBottom: "4px" }}>{stat.label}</p>
           {loading ? (
-            <Skeleton className="h-4 w-16 mx-auto" />
+            <div
+              style={{
+                height: "16px",
+                width: "64px",
+                margin: "0 auto",
+                background: "#1a1a2e",
+                borderRadius: "8px",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              }}
+            />
           ) : (
-            <p className={`text-sm font-bold ${stat.color}`}>
+            <p style={{ fontSize: "14px", fontWeight: "bold", color: stat.color }}>
               {formatCurrency(stat.value)}
             </p>
           )}

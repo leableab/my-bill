@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m 'Initial commit:*)",
+      "Bash(gh repo:*)",
+      "Bash(npm --version)",
+      "Bash(npx --version)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:supabase.com)",
+      "WebFetch(domain:capacitorjs.com)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(git rm:*)",
+      "Bash(rm -rf financetracker/.git)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}

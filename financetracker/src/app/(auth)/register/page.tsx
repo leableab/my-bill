@@ -6,30 +6,82 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Wallet, Mail, Lock, User, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Wallet, User, Mail, Lock, Loader2 } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 
-const registerSchema = z.object({
-  displayName: z.string().min(1, "กรุณากรอกชื่อที่แสดง"),
-  email: z.string().email("กรุณากรอกอีเมลที่ถูกต้อง"),
-  password: z.string().min(6, "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"),
-  confirmPassword: z.string().min(6, "กรุณายืนยันรหัสผ่าน"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "รหัสผ่านไม่ตรงกัน",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    displayName: z.string().min(1, "กรุณากรอกชื่อที่แสดง"),
+    email: z.string().email("กรุณากรอกอีเมลที่ถูกต้อง"),
+    password: z.string().min(6, "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"),
+    confirmPassword: z.string().min(6, "กรุณายืนยันรหัสผ่าน"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "รหัสผ่านไม่ตรงกัน",
+    path: ["confirmPassword"],
+  });
 
 type RegisterForm = z.infer<typeof registerSchema>;
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: "50px",
+  padding: "0 16px",
+  borderRadius: "12px",
+  background: "#1a1a2e",
+  border: "1px solid #2a2a4a",
+  color: "#f1f5f9",
+  fontSize: "15px",
+  outline: "none",
+};
+
+const iconBox: React.CSSProperties = {
+  width: "44px",
+  height: "44px",
+  borderRadius: "12px",
+  background: "#1a1a2e",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+};
+
+function Field({
+  label,
+  icon: Icon,
+  error,
+  children,
+}: {
+  label: string;
+  icon: React.ElementType;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="block text-sm" style={{ color: "#94a3b8", marginBottom: "8px" }}>
+        {label}
+      </label>
+      <div className="flex items-center" style={{ gap: "10px" }}>
+        <div style={iconBox}>
+          <Icon style={{ width: "20px", height: "20px", color: "#64748b" }} />
+        </div>
+        {children}
+      </div>
+      {error && <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{error}</p>}
+    </div>
+  );
+}
 
 export default function RegisterPage() {
   const router = useRouter();
   const { signUp } = useAuth();
   const [error, setError] = useState("");
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
   });
 
@@ -43,108 +95,123 @@ export default function RegisterPage() {
     }
   };
 
+  const focusHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.style.borderColor = "#a855f7";
+    e.target.style.boxShadow = "0 0 15px rgba(168, 85, 247, 0.2)";
+  };
+  const blurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.style.borderColor = "#2a2a4a";
+    e.target.style.boxShadow = "none";
+  };
+
   return (
-    <div className="min-h-dvh flex items-center justify-center px-4 bg-bg-primary">
-      <div className="w-full max-w-[380px]">
+    <div
+      className="min-h-dvh flex items-center justify-center"
+      style={{
+        padding: "20px",
+        background: "linear-gradient(180deg, #0a0a0f 0%, #0d0820 50%, #0a0a0f 100%)",
+      }}
+    >
+      <div style={{ width: "100%", maxWidth: "380px" }}>
         {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center mb-4 glow-purple">
-            <Wallet className="w-8 h-8 text-accent" />
+        <div className="flex flex-col items-center" style={{ marginBottom: "32px" }}>
+          <div
+            className="flex items-center justify-center"
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "20px",
+              background: "rgba(168, 85, 247, 0.15)",
+              boxShadow: "0 0 40px rgba(168, 85, 247, 0.4), 0 0 80px rgba(168, 85, 247, 0.15)",
+              marginBottom: "20px",
+            }}
+          >
+            <Wallet style={{ width: "40px", height: "40px", color: "#a855f7" }} />
           </div>
-          <h1 className="text-2xl font-bold text-text-primary glow-text">My Bill</h1>
-          <p className="text-text-secondary text-sm mt-1">จัดการค่าใช้จ่ายอย่างชาญฉลาด</p>
+          <h1
+            className="text-3xl font-bold"
+            style={{
+              color: "#f1f5f9",
+              textShadow: "0 0 20px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.3)",
+              marginBottom: "4px",
+            }}
+          >
+            My Bill
+          </h1>
+          <p style={{ color: "#94a3b8", fontSize: "14px" }}>จัดการค่าใช้จ่ายอย่างชาญฉลาด</p>
         </div>
 
-        <Card className="bg-bg-card border-border glow-purple-sm">
-          <CardHeader className="pb-4">
-            <h2 className="text-lg font-semibold text-text-primary text-center">สมัครสมาชิก</h2>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="displayName" className="text-text-secondary text-sm">ชื่อที่แสดง</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-                  <Input
-                    id="displayName"
-                    type="text"
-                    placeholder="ชื่อของคุณ"
-                    className="pl-10 bg-bg-input border-border text-text-primary placeholder:text-text-secondary/50 focus:border-accent focus:ring-accent/20"
-                    {...register("displayName")}
-                  />
-                </div>
-                {errors.displayName && <p className="text-danger text-xs">{errors.displayName.message}</p>}
-              </div>
+        {/* Card */}
+        <div
+          style={{
+            borderRadius: "20px",
+            padding: "28px 24px",
+            background: "#131320",
+            border: "1px solid #2a2a4a",
+            boxShadow: "0 0 30px rgba(168, 85, 247, 0.15), 0 0 60px rgba(168, 85, 247, 0.05)",
+          }}
+        >
+          <h2 className="text-lg font-semibold text-center" style={{ color: "#f1f5f9", marginBottom: "24px" }}>
+            สมัครสมาชิก
+          </h2>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-text-secondary text-sm">อีเมล</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your@email.com"
-                    className="pl-10 bg-bg-input border-border text-text-primary placeholder:text-text-secondary/50 focus:border-accent focus:ring-accent/20"
-                    {...register("email")}
-                  />
-                </div>
-                {errors.email && <p className="text-danger text-xs">{errors.email.message}</p>}
-              </div>
+          <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <Field label="ชื่อที่แสดง" icon={User} error={errors.displayName?.message}>
+              <input type="text" placeholder="ชื่อของคุณ" style={{ ...inputStyle, flex: 1 }} {...register("displayName")} />
+            </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-text-secondary text-sm">รหัสผ่าน</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="pl-10 bg-bg-input border-border text-text-primary placeholder:text-text-secondary/50 focus:border-accent focus:ring-accent/20"
-                    {...register("password")}
-                  />
-                </div>
-                {errors.password && <p className="text-danger text-xs">{errors.password.message}</p>}
-              </div>
+            <Field label="อีเมล" icon={Mail} error={errors.email?.message}>
+              <input type="email" placeholder="your@email.com" style={{ ...inputStyle, flex: 1 }} {...register("email")} />
+            </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-text-secondary text-sm">ยืนยันรหัสผ่าน</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    className="pl-10 bg-bg-input border-border text-text-primary placeholder:text-text-secondary/50 focus:border-accent focus:ring-accent/20"
-                    {...register("confirmPassword")}
-                  />
-                </div>
-                {errors.confirmPassword && <p className="text-danger text-xs">{errors.confirmPassword.message}</p>}
-              </div>
+            <Field label="รหัสผ่าน" icon={Lock} error={errors.password?.message}>
+              <input type="password" placeholder="••••••••" style={{ ...inputStyle, flex: 1 }} {...register("password")} />
+            </Field>
 
-              {error && (
-                <div className="bg-danger/10 border border-danger/20 rounded-lg p-3">
-                  <p className="text-danger text-sm text-center">{error}</p>
-                </div>
+            <Field label="ยืนยันรหัสผ่าน" icon={Lock} error={errors.confirmPassword?.message}>
+              <input type="password" placeholder="••••••••" style={{ ...inputStyle, flex: 1 }} {...register("confirmPassword")} />
+            </Field>
+
+            {error && (
+              <div style={{ borderRadius: "12px", padding: "12px", textAlign: "center", background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
+                <p style={{ color: "#ef4444", fontSize: "14px" }}>{error}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="font-semibold text-white transition-all disabled:opacity-50"
+              style={{
+                width: "100%",
+                height: "50px",
+                borderRadius: "12px",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "15px",
+                marginTop: "4px",
+                background: "linear-gradient(135deg, #a855f7, #9333ea)",
+                boxShadow: "0 0 20px rgba(168, 85, 247, 0.4), 0 0 60px rgba(168, 85, 247, 0.1)",
+              }}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  กำลังสมัคร...
+                </span>
+              ) : (
+                "สมัครสมาชิก"
               )}
+            </button>
+          </form>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-accent hover:bg-accent-dark text-white font-medium glow-purple-sm hover:glow-purple transition-all"
-              >
-                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                สมัครสมาชิก
-              </Button>
-            </form>
-
-            <p className="text-center text-text-secondary text-sm mt-6">
-              มีบัญชีแล้ว?{" "}
-              <Link href="/login" className="text-accent hover:underline font-medium">
-                เข้าสู่ระบบ
-              </Link>
-            </p>
-          </CardContent>
-        </Card>
+          <p className="text-center" style={{ color: "#94a3b8", fontSize: "14px", marginTop: "24px" }}>
+            มีบัญชีแล้ว?{" "}
+            <Link href="/login" className="font-medium hover:underline" style={{ color: "#a855f7" }}>
+              เข้าสู่ระบบ
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

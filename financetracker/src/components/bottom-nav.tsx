@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Receipt, Plus, Wallet, BarChart3 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { AddTransactionSheet } from "@/components/add-transaction-sheet";
 
@@ -21,15 +20,29 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-bg-nav/95 backdrop-blur-lg border-t border-border z-50">
-        <div className="flex items-center justify-around h-16 px-2">
+      <nav
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50"
+        style={{
+          background: "rgba(10, 10, 18, 0.95)",
+          backdropFilter: "blur(20px)",
+          borderTop: "1px solid #1e1e3a",
+        }}
+      >
+        <div className="flex items-center justify-around px-2" style={{ height: "68px" }}>
           {navItems.map((item) => {
             if (item.isFab) {
               return (
                 <button
                   key={item.href}
                   onClick={() => setShowAddSheet(true)}
-                  className="flex items-center justify-center w-12 h-12 -mt-6 rounded-full bg-accent glow-purple hover:bg-accent-dark transition-all"
+                  className="flex items-center justify-center rounded-full transition-all"
+                  style={{
+                    width: "52px",
+                    height: "52px",
+                    marginTop: "-24px",
+                    background: "linear-gradient(135deg, #a855f7, #9333ea)",
+                    boxShadow: "0 0 25px rgba(168, 85, 247, 0.5), 0 0 60px rgba(168, 85, 247, 0.15)",
+                  }}
                 >
                   <Plus className="w-6 h-6 text-white" />
                 </button>
@@ -41,12 +54,13 @@ export function BottomNav() {
               <button
                 key={item.href}
                 onClick={() => router.push(item.href)}
-                className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors",
-                  isActive ? "text-accent" : "text-text-secondary hover:text-text-primary"
-                )}
+                className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors"
+                style={{ color: isActive ? "#a855f7" : "#64748b" }}
               >
-                <item.icon className={cn("w-5 h-5", isActive && "glow-text")} />
+                <item.icon
+                  className="w-5 h-5"
+                  style={isActive ? { filter: "drop-shadow(0 0 6px rgba(168, 85, 247, 0.6))" } : {}}
+                />
                 <span className="text-[10px] font-medium">{item.label}</span>
               </button>
             );

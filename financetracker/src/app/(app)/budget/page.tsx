@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { useBudgets } from "@/hooks/use-budgets";
 import { BudgetCard } from "@/components/budget/budget-card";
 import { AddBudgetDialog } from "@/components/budget/add-budget-dialog";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format";
@@ -49,29 +47,46 @@ export default function BudgetPage() {
   const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-text-primary">งบประมาณ</h1>
-        <Button
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <h1 style={{ color: "#f1f5f9", fontSize: "20px", fontWeight: "bold" }}>งบประมาณ</h1>
+        <button
           onClick={() => setShowDialog(true)}
-          size="sm"
-          className="bg-accent hover:bg-accent-dark text-white gap-1"
+          style={{
+            background: "#a855f7",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: "10px",
+            fontSize: "13px",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+          }}
         >
-          <Plus className="w-4 h-4" />
+          <Plus style={{ width: 16, height: 16 }} />
           เพิ่ม
-        </Button>
+        </button>
       </div>
 
       {/* Total overview */}
       {!loading && budgets.length > 0 && (
-        <div className="rounded-xl bg-bg-card border border-border p-4">
-          <div className="flex items-center gap-3 mb-2">
-            <Wallet className="w-5 h-5 text-accent" />
-            <span className="text-sm text-text-secondary">ภาพรวมเดือนนี้</span>
+        <div
+          style={{
+            background: "#131320",
+            border: "1px solid #2a2a4a",
+            borderRadius: "16px",
+            padding: "16px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+            <Wallet style={{ width: 20, height: 20, color: "#a855f7" }} />
+            <span style={{ fontSize: "14px", color: "#94a3b8" }}>ภาพรวมเดือนนี้</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-text-secondary">ใช้ไปแล้ว</span>
-            <span className="text-text-primary font-semibold">
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+            <span style={{ color: "#94a3b8" }}>ใช้ไปแล้ว</span>
+            <span style={{ color: "#f1f5f9", fontWeight: 600 }}>
               {formatCurrency(totalSpent)} / {formatCurrency(totalBudget)}
             </span>
           </div>
@@ -80,24 +95,54 @@ export default function BudgetPage() {
 
       {/* Budget List */}
       {loading ? (
-        <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-xl" />
+            <div
+              key={i}
+              style={{
+                height: "120px",
+                background: "#1a1a2e",
+                borderRadius: "16px",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              }}
+            />
           ))}
         </div>
       ) : budgets.length === 0 ? (
-        <div className="text-center py-16">
-          <Wallet className="w-12 h-12 text-text-secondary mx-auto mb-3 opacity-50" />
-          <p className="text-text-secondary mb-4">ยังไม่ได้ตั้งงบประมาณ</p>
-          <Button
+        <div
+          style={{
+            background: "#131320",
+            border: "1px solid #2a2a4a",
+            borderRadius: "16px",
+            padding: "40px 20px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Wallet style={{ width: 48, height: 48, color: "#94a3b8", opacity: 0.5, marginBottom: "12px" }} />
+          <p style={{ color: "#94a3b8", fontSize: "14px", marginBottom: "16px" }}>ยังไม่ได้ตั้งงบประมาณ</p>
+          <button
             onClick={() => setShowDialog(true)}
-            className="bg-accent hover:bg-accent-dark text-white"
+            style={{
+              background: "linear-gradient(135deg, #a855f7, #9333ea)",
+              color: "white",
+              height: "50px",
+              padding: "0 24px",
+              borderRadius: "12px",
+              border: "none",
+              cursor: "pointer",
+              fontWeight: 500,
+              fontSize: "14px",
+              boxShadow: "0 0 15px rgba(168,85,247,0.3)",
+            }}
           >
             ตั้งงบประมาณแรก
-          </Button>
+          </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {budgets.map((b) => (
             <BudgetCard
               key={b.id}

@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { useTransactions } from "@/hooks/use-transactions";
 import { FilterBar } from "@/components/transactions/filter-bar";
 import { TransactionItem } from "@/components/transactions/transaction-item";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/format";
 import { toast } from "sonner";
 
@@ -12,9 +11,7 @@ export default function TransactionsPage() {
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth());
   const [year, setYear] = useState(now.getFullYear());
-  const [typeFilter, setTypeFilter] = useState<"all" | "income" | "expense">(
-    "all"
-  );
+  const [typeFilter, setTypeFilter] = useState<"all" | "income" | "expense">("all");
   const [search, setSearch] = useState("");
 
   const { transactions, loading, deleteTransaction } = useTransactions({
@@ -25,8 +22,7 @@ export default function TransactionsPage() {
   });
 
   const { totalIncome, totalExpense } = useMemo(() => {
-    let inc = 0,
-      exp = 0;
+    let inc = 0, exp = 0;
     for (const tx of transactions) {
       if (tx.type === "income") inc += Number(tx.amount);
       else exp += Number(tx.amount);
@@ -36,14 +32,10 @@ export default function TransactionsPage() {
 
   const handleDelete = async (id: string) => {
     const { error } = await deleteTransaction(id);
-    if (error) {
-      toast.error("ลบไม่สำเร็จ", { description: error });
-    } else {
-      toast.success("ลบรายการเรียบร้อย");
-    }
+    if (error) toast.error("ลบไม่สำเร็จ", { description: error });
+    else toast.success("ลบรายการเรียบร้อย");
   };
 
-  // Group transactions by date
   const grouped = useMemo(() => {
     const groups = new Map<string, typeof transactions>();
     for (const tx of transactions) {
@@ -55,64 +47,61 @@ export default function TransactionsPage() {
   }, [transactions]);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold text-text-primary">รายการทั้งหมด</h1>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <h1 className="text-xl font-bold" style={{ color: "#f1f5f9" }}>
+        รายการทั้งหมด
+      </h1>
 
       <FilterBar
         month={month}
         year={year}
         type={typeFilter}
         search={search}
-        onMonthChange={(m, y) => {
-          setMonth(m);
-          setYear(y);
-        }}
+        onMonthChange={(m, y) => { setMonth(m); setYear(y); }}
         onTypeChange={setTypeFilter}
         onSearchChange={setSearch}
       />
 
-      {/* Monthly summary mini bar */}
-      <div className="flex justify-between text-xs px-1">
-        <span className="text-success">รับ {formatCurrency(totalIncome)}</span>
-        <span className="text-danger">จ่าย {formatCurrency(totalExpense)}</span>
+      {/* Summary */}
+      <div
+        className="flex justify-between rounded-xl"
+        style={{ padding: "12px 16px", background: "#131320", border: "1px solid #1e1e3a" }}
+      >
+        <span className="text-xs font-medium" style={{ color: "#22c55e" }}>
+          รับ {formatCurrency(totalIncome)}
+        </span>
+        <span className="text-xs font-medium" style={{ color: "#ef4444" }}>
+          จ่าย {formatCurrency(totalExpense)}
+        </span>
         <span
-          className={
-            totalIncome - totalExpense >= 0 ? "text-accent" : "text-danger"
-          }
+          className="text-xs font-medium"
+          style={{ color: totalIncome - totalExpense >= 0 ? "#a855f7" : "#ef4444" }}
         >
           คงเหลือ {formatCurrency(totalIncome - totalExpense)}
         </span>
       </div>
 
-      {/* Transaction List */}
+      {/* List */}
       {loading ? (
-        <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-xl" />
+            <div key={i} className="rounded-xl animate-pulse" style={{ height: "68px", background: "#131320" }} />
           ))}
         </div>
       ) : grouped.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-text-secondary">ไม่มีรายการในเดือนนี้</p>
+        <div className="text-center" style={{ padding: "48px 0" }}>
+          <p style={{ color: "#94a3b8", fontSize: "14px" }}>ไม่มีรายการในเดือนนี้</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {grouped.map(([date, txs]) => (
-            <div key={date} className="space-y-2">
-              <p className="text-xs text-text-secondary px-1 font-medium">
-                {new Date(date).toLocaleDateString("th-TH", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                })}
+            <div key={date} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <p className="font-medium" style={{ color: "#64748b", fontSize: "12px", paddingLeft: "4px" }}>
+                {new Date(date).toLocaleDateString("th-TH", { weekday: "short", day: "numeric", month: "short" })}
               </p>
-              <div className="space-y-2">
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {txs.map((tx) => (
-                  <TransactionItem
-                    key={tx.id}
-                    transaction={tx}
-                    onDelete={handleDelete}
-                  />
+                  <TransactionItem key={tx.id} transaction={tx} onDelete={handleDelete} />
                 ))}
               </div>
             </div>

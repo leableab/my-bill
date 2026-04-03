@@ -22,10 +22,10 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-dvh bg-bg-primary">
+      <div className="flex items-center justify-center min-h-dvh" style={{ background: "#0a0a0f" }}>
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
-          <p className="text-text-secondary text-sm">กำลังโหลด...</p>
+          <Loader2 className="h-8 w-8 animate-spin" style={{ color: "#a855f7" }} />
+          <p style={{ color: "#94a3b8", fontSize: "14px" }}>กำลังโหลด...</p>
         </div>
       </div>
     );

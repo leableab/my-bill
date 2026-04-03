@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/auth-provider";
@@ -72,18 +71,31 @@ export function CsvExport({ month, year }: CsvExportProps) {
   };
 
   return (
-    <Button
+    <button
       onClick={handleExport}
       disabled={exporting}
-      variant="outline"
-      className="w-full border-border text-text-primary hover:bg-bg-card gap-2"
+      style={{
+        width: "100%",
+        height: "44px",
+        background: "transparent",
+        border: "1px solid #2a2a4a",
+        borderRadius: "12px",
+        color: "#f1f5f9",
+        cursor: exporting ? "not-allowed" : "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
+        fontSize: "14px",
+        opacity: exporting ? 0.6 : 1,
+      }}
     >
       {exporting ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} />
       ) : (
-        <Download className="w-4 h-4" />
+        <Download style={{ width: 16, height: 16 }} />
       )}
       ส่งออก CSV
-    </Button>
+    </button>
   );
 }

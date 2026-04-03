@@ -39,25 +39,37 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-xl font-bold text-text-primary">รายงาน</h1>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <h1 style={{ color: "#f1f5f9", fontSize: "20px", fontWeight: "bold" }}>รายงาน</h1>
 
       {/* Month selector */}
-      <div className="flex items-center justify-between">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <button
           onClick={prevMonth}
-          className="p-2 rounded-lg hover:bg-bg-card transition-colors"
+          style={{
+            padding: "8px",
+            borderRadius: "8px",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
-          <ChevronLeft className="w-5 h-5 text-text-secondary" />
+          <ChevronLeft style={{ width: 20, height: 20, color: "#94a3b8" }} />
         </button>
-        <h2 className="text-base font-semibold text-text-primary">
+        <h2 style={{ fontSize: "16px", fontWeight: 600, color: "#f1f5f9" }}>
           {MONTHS_TH[month]} {year + 543}
         </h2>
         <button
           onClick={nextMonth}
-          className="p-2 rounded-lg hover:bg-bg-card transition-colors"
+          style={{
+            padding: "8px",
+            borderRadius: "8px",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
         >
-          <ChevronRight className="w-5 h-5 text-text-secondary" />
+          <ChevronRight style={{ width: 20, height: 20, color: "#94a3b8" }} />
         </button>
       </div>
 
@@ -73,58 +85,87 @@ export default function ReportsPage() {
       <MonthlyChart data={monthlyData} loading={loading} />
 
       {/* Category Breakdown */}
-      <div className="rounded-xl bg-bg-card border border-border p-4">
-        <h3 className="text-sm font-semibold text-text-primary mb-3">
+      <div
+        style={{
+          background: "#131320",
+          border: "1px solid #2a2a4a",
+          borderRadius: "16px",
+          padding: "20px",
+        }}
+      >
+        <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#f1f5f9", marginBottom: "12px" }}>
           รายจ่ายตามหมวดหมู่
         </h3>
         {loading ? (
-          <div className="space-y-3">
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-8 bg-bg-input rounded animate-pulse" />
+              <div
+                key={i}
+                style={{
+                  height: "32px",
+                  background: "#1a1a2e",
+                  borderRadius: "8px",
+                  animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                }}
+              />
             ))}
           </div>
         ) : categoryData.length === 0 ? (
-          <p className="text-text-secondary text-sm text-center py-4">
+          <p style={{ color: "#94a3b8", fontSize: "14px", textAlign: "center", padding: "16px 0" }}>
             ไม่มีข้อมูล
           </p>
         ) : (
-          <div className="space-y-3">
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {categoryData.map((cat) => {
               const info = getCategoryByValue(cat.category);
               const Icon = info?.icon;
               return (
-                <div key={cat.category} className="flex items-center gap-3">
+                <div key={cat.category} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${cat.color}20` }}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      backgroundColor: `${cat.color}20`,
+                    }}
                   >
                     {Icon && (
-                      <Icon
-                        className="w-4 h-4"
-                        style={{ color: cat.color }}
-                      />
+                      <Icon style={{ width: 16, height: 16, color: cat.color }} />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-xs text-text-primary">
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <span style={{ fontSize: "12px", color: "#f1f5f9" }}>
                         {cat.label}
                       </span>
-                      <span className="text-xs text-text-secondary">
+                      <span style={{ fontSize: "12px", color: "#94a3b8" }}>
                         {cat.percentage.toFixed(0)}%
                       </span>
                     </div>
-                    <div className="h-1.5 bg-bg-input rounded-full overflow-hidden">
+                    <div
+                      style={{
+                        height: "6px",
+                        background: "#1a1a2e",
+                        borderRadius: "3px",
+                        overflow: "hidden",
+                      }}
+                    >
                       <div
-                        className="h-full rounded-full transition-all"
                         style={{
+                          height: "100%",
+                          borderRadius: "3px",
+                          transition: "width 0.3s ease",
                           width: `${Math.min(cat.percentage, 100)}%`,
                           backgroundColor: cat.color,
                         }}
                       />
                     </div>
                   </div>
-                  <span className="text-xs font-medium text-text-primary shrink-0">
+                  <span style={{ fontSize: "12px", fontWeight: 500, color: "#f1f5f9", flexShrink: 0 }}>
                     {formatCurrency(cat.amount)}
                   </span>
                 </div>

@@ -7,13 +7,53 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/auth-provider";
 import { profileSchema, type ProfileFormData } from "@/lib/schemas";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { User, LogOut, Bell, Coins, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
+
+const cardStyle: React.CSSProperties = {
+  background: "#131320",
+  border: "1px solid #2a2a4a",
+  borderRadius: "16px",
+  padding: "20px",
+};
+
+const labelStyle: React.CSSProperties = {
+  color: "#94a3b8",
+  fontSize: "14px",
+  marginBottom: "10px",
+  display: "block",
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: "50px",
+  padding: "0 16px",
+  borderRadius: "12px",
+  background: "#1a1a2e",
+  border: "1px solid #2a2a4a",
+  color: "#f1f5f9",
+  fontSize: "15px",
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const separatorStyle: React.CSSProperties = {
+  height: "1px",
+  background: "#1e1e3a",
+  border: "none",
+  margin: "16px 0",
+};
+
+const iconBoxStyle: React.CSSProperties = {
+  width: "40px",
+  height: "40px",
+  minWidth: "40px",
+  background: "rgba(168,85,247,0.15)",
+  borderRadius: "12px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
 
 export default function SettingsPage() {
   const { user, signOut } = useAuth();
@@ -21,6 +61,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [threshold, setThreshold] = useState(80);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema) as never,
@@ -75,68 +116,97 @@ export default function SettingsPage() {
     router.replace("/login");
   };
 
+  const getInputStyle = (fieldName: string): React.CSSProperties => ({
+    ...inputStyle,
+    ...(focusedField === fieldName
+      ? { borderColor: "#a855f7", boxShadow: "0 0 15px rgba(168,85,247,0.2)" }
+      : {}),
+  });
+
   if (loading) {
     return (
-      <div className="space-y-5">
-        <h1 className="text-xl font-bold text-text-primary">ตั้งค่า</h1>
-        <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-xl" />
-          ))}
-        </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <h1 style={{ color: "#f1f5f9", fontSize: "20px", fontWeight: "bold", margin: 0 }}>ตั้งค่า</h1>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              height: "64px",
+              borderRadius: "12px",
+              background: "#1a1a2e",
+              animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            }}
+          />
+        ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-xl font-bold text-text-primary">ตั้งค่า</h1>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <h1 style={{ color: "#f1f5f9", fontSize: "20px", fontWeight: "bold", margin: 0 }}>ตั้งค่า</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         {/* Profile Section */}
-        <div className="rounded-xl bg-bg-card border border-border p-4 space-y-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-              <User className="w-5 h-5 text-accent" />
+        <div style={cardStyle}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={iconBoxStyle}>
+              <User style={{ width: "20px", height: "20px", color: "#a855f7" }} />
             </div>
             <div>
-              <p className="text-sm font-medium text-text-primary">โปรไฟล์</p>
-              <p className="text-xs text-text-secondary">{user?.email}</p>
+              <p style={{ color: "#f1f5f9", fontSize: "15px", fontWeight: 600, margin: 0 }}>โปรไฟล์</p>
+              <p style={{ color: "#94a3b8", fontSize: "13px", margin: "2px 0 0 0" }}>{user?.email}</p>
             </div>
           </div>
 
-          <Separator className="bg-border" />
+          <hr style={separatorStyle} />
 
-          <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">ชื่อที่แสดง</Label>
-            <Input
+          <div>
+            <label style={labelStyle}>ชื่อที่แสดง</label>
+            <input
               placeholder="ชื่อของคุณ"
-              className="bg-bg-input border-border text-text-primary"
               {...register("display_name")}
+              style={getInputStyle("display_name")}
+              onFocus={() => setFocusedField("display_name")}
+              onBlur={() => setFocusedField(null)}
             />
-            {errors.display_name && <p className="text-danger text-xs">{errors.display_name.message}</p>}
+            {errors.display_name && (
+              <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{errors.display_name.message}</p>
+            )}
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">สกุลเงิน</Label>
-            <div className="flex items-center gap-3 p-3 bg-bg-input rounded-lg border border-border">
-              <Coins className="w-4 h-4 text-accent" />
-              <span className="text-text-primary text-sm">บาท (฿)</span>
+          <div style={{ marginTop: "16px" }}>
+            <label style={labelStyle}>สกุลเงิน</label>
+            <div
+              style={{
+                ...inputStyle,
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                cursor: "default",
+              }}
+            >
+              <Coins style={{ width: "18px", height: "18px", color: "#a855f7" }} />
+              <span style={{ color: "#f1f5f9", fontSize: "15px" }}>บาท (฿)</span>
             </div>
           </div>
         </div>
 
         {/* Budget Alert */}
-        <div className="rounded-xl bg-bg-card border border-border p-4 space-y-4">
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-accent" />
-            <span className="text-sm font-medium text-text-primary">การแจ้งเตือนงบประมาณ</span>
+        <div style={cardStyle}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={iconBoxStyle}>
+              <Bell style={{ width: "20px", height: "20px", color: "#a855f7" }} />
+            </div>
+            <span style={{ color: "#f1f5f9", fontSize: "15px", fontWeight: 600 }}>การแจ้งเตือนงบประมาณ</span>
           </div>
-          <Separator className="bg-border" />
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-text-secondary">แจ้งเตือนเมื่อใช้เกิน</span>
-              <span className="text-accent font-semibold">{threshold}%</span>
+
+          <hr style={separatorStyle} />
+
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <span style={{ color: "#94a3b8", fontSize: "14px" }}>แจ้งเตือนเมื่อใช้เกิน</span>
+              <span style={{ color: "#a855f7", fontWeight: 600, fontSize: "15px" }}>{threshold}%</span>
             </div>
             <input
               type="range"
@@ -145,46 +215,89 @@ export default function SettingsPage() {
               step={5}
               value={threshold}
               onChange={(e) => setThreshold(Number(e.target.value))}
-              className="w-full h-2 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent"
+              style={{
+                width: "100%",
+                height: "6px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                accentColor: "#a855f7",
+              }}
             />
-            <div className="flex justify-between text-xs text-text-secondary">
-              <span>50%</span>
-              <span>100%</span>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+              <span style={{ color: "#64748b", fontSize: "12px" }}>50%</span>
+              <span style={{ color: "#64748b", fontSize: "12px" }}>100%</span>
             </div>
           </div>
         </div>
 
         {/* Save Button */}
-        <Button
+        <button
           type="submit"
           disabled={saving}
-          className="w-full bg-accent hover:bg-accent-dark text-white font-medium"
+          style={{
+            width: "100%",
+            height: "50px",
+            borderRadius: "12px",
+            background: "linear-gradient(135deg, #a855f7, #9333ea)",
+            color: "white",
+            fontWeight: 600,
+            fontSize: "15px",
+            border: "none",
+            cursor: saving ? "not-allowed" : "pointer",
+            opacity: saving ? 0.7 : 1,
+            boxShadow: "0 0 20px rgba(168,85,247,0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+          }}
         >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+          {saving && <Loader2 style={{ width: "18px", height: "18px", animation: "spin 1s linear infinite" }} />}
           บันทึกการตั้งค่า
-        </Button>
+        </button>
       </form>
 
       {/* App Info */}
-      <div className="rounded-xl bg-bg-card border border-border p-4">
-        <div className="flex items-center gap-3">
-          <Info className="w-5 h-5 text-text-secondary" />
+      <div style={cardStyle}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div
+            style={{
+              ...iconBoxStyle,
+              background: "rgba(148,163,184,0.15)",
+            }}
+          >
+            <Info style={{ width: "20px", height: "20px", color: "#94a3b8" }} />
+          </div>
           <div>
-            <p className="text-sm text-text-primary">My Bill</p>
-            <p className="text-xs text-text-secondary">เวอร์ชัน 1.0.0 — จัดการค่าใช้จ่ายอย่างชาญฉลาด</p>
+            <p style={{ color: "#f1f5f9", fontSize: "15px", fontWeight: 600, margin: 0 }}>My Bill</p>
+            <p style={{ color: "#94a3b8", fontSize: "13px", margin: "2px 0 0 0" }}>เวอร์ชัน 1.0.0</p>
           </div>
         </div>
       </div>
 
       {/* Logout */}
-      <Button
+      <button
         onClick={handleLogout}
-        variant="outline"
-        className="w-full border-danger/30 text-danger hover:bg-danger/10 hover:text-danger"
+        type="button"
+        style={{
+          width: "100%",
+          height: "50px",
+          borderRadius: "12px",
+          background: "transparent",
+          border: "1px solid rgba(239,68,68,0.3)",
+          color: "#ef4444",
+          fontWeight: 600,
+          fontSize: "15px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+        }}
       >
-        <LogOut className="w-4 h-4 mr-2" />
+        <LogOut style={{ width: "18px", height: "18px" }} />
         ออกจากระบบ
-      </Button>
+      </button>
     </div>
   );
 }

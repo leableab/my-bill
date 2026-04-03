@@ -4,13 +4,9 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { budgetSchema, type BudgetFormData } from "@/lib/schemas";
 import { EXPENSE_CATEGORIES } from "@/lib/constants";
-import { cn } from "@/lib/utils";
 
 interface AddBudgetDialogProps {
   open: boolean;
@@ -41,16 +37,32 @@ export function AddBudgetDialog({ open, onOpenChange, onSave, existingCategories
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-bg-card border-border max-w-[380px]">
+      <DialogContent
+        style={{
+          background: "#131320",
+          border: "1px solid #2a2a4a",
+          borderRadius: "16px",
+          maxWidth: "380px",
+          padding: "20px",
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="text-text-primary">ตั้งงบประมาณ</DialogTitle>
+          <DialogTitle style={{ color: "#f1f5f9", fontSize: "16px", fontWeight: "bold" }}>
+            ตั้งงบประมาณ
+          </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {/* Category Selection */}
-          <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">หมวดหมู่</Label>
-            <div className="grid grid-cols-4 gap-2">
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={{ color: "#94a3b8", fontSize: "14px", marginBottom: "2px" }}>หมวดหมู่</label>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(4, 1fr)",
+                gap: "10px",
+              }}
+            >
               {availableCategories.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = selectedCategory === cat.value;
@@ -59,53 +71,103 @@ export function AddBudgetDialog({ open, onOpenChange, onSave, existingCategories
                     key={cat.value}
                     type="button"
                     onClick={() => setValue("category", cat.value)}
-                    className={cn(
-                      "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
-                      isSelected
-                        ? "bg-accent/20 border-2 border-accent"
-                        : "bg-bg-input border-2 border-transparent hover:border-border"
-                    )}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                      padding: "12px",
+                      borderRadius: "12px",
+                      background: isSelected ? "rgba(168,85,247,0.2)" : "#1a1a2e",
+                      border: isSelected ? "2px solid #a855f7" : "2px solid transparent",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
                   >
-                    <Icon className="w-5 h-5" style={{ color: cat.color }} />
-                    <span className="text-[9px] text-text-secondary">{cat.label}</span>
+                    <Icon style={{ width: 20, height: 20, color: cat.color }} />
+                    <span style={{ fontSize: "9px", color: "#94a3b8" }}>{cat.label}</span>
                   </button>
                 );
               })}
             </div>
-            {errors.category && <p className="text-danger text-xs">{errors.category.message}</p>}
+            {errors.category && <p style={{ color: "#ef4444", fontSize: "12px" }}>{errors.category.message}</p>}
             {availableCategories.length === 0 && (
-              <p className="text-text-secondary text-xs text-center py-2">ตั้งงบประมาณครบทุกหมวดหมู่แล้ว</p>
+              <p style={{ color: "#94a3b8", fontSize: "12px", textAlign: "center", padding: "8px 0" }}>
+                ตั้งงบประมาณครบทุกหมวดหมู่แล้ว
+              </p>
             )}
           </div>
 
           {/* Amount */}
-          <div className="space-y-2">
-            <Label className="text-text-secondary text-sm">งบประมาณรายเดือน (฿)</Label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={{ color: "#94a3b8", fontSize: "14px", marginBottom: "2px" }}>
+              งบประมาณรายเดือน (฿)
+            </label>
             <Controller
               name="monthly_limit"
               control={control}
               render={({ field }) => (
-                <Input
+                <input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
-                  className="bg-bg-input border-border text-text-primary text-right text-lg font-semibold"
                   value={field.value ?? ""}
                   onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                  style={{
+                    height: "50px",
+                    padding: "0 16px",
+                    borderRadius: "12px",
+                    background: "#1a1a2e",
+                    border: "1px solid #2a2a4a",
+                    color: "#f1f5f9",
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    textAlign: "right",
+                    outline: "none",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#a855f7";
+                    e.currentTarget.style.boxShadow = "0 0 15px rgba(168,85,247,0.2)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#2a2a4a";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               )}
             />
-            {errors.monthly_limit && <p className="text-danger text-xs">{errors.monthly_limit.message}</p>}
+            {errors.monthly_limit && <p style={{ color: "#ef4444", fontSize: "12px" }}>{errors.monthly_limit.message}</p>}
           </div>
 
-          <Button
+          <button
             type="submit"
             disabled={saving || availableCategories.length === 0}
-            className="w-full bg-accent hover:bg-accent-dark text-white font-medium"
+            style={{
+              width: "100%",
+              height: "50px",
+              background: saving || availableCategories.length === 0
+                ? "#64748b"
+                : "linear-gradient(135deg, #a855f7, #9333ea)",
+              color: "white",
+              borderRadius: "12px",
+              border: "none",
+              cursor: saving || availableCategories.length === 0 ? "not-allowed" : "pointer",
+              fontWeight: 500,
+              fontSize: "14px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              boxShadow: saving || availableCategories.length === 0
+                ? "none"
+                : "0 0 15px rgba(168,85,247,0.3)",
+            }}
           >
-            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            {saving ? <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} /> : null}
             บันทึก
-          </Button>
+          </button>
         </form>
       </DialogContent>
     </Dialog>

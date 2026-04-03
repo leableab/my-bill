@@ -8,8 +8,6 @@ import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { DonutChart } from "@/components/dashboard/donut-chart";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { formatMonthYear } from "@/lib/format";
-import { Settings } from "lucide-react";
-import Link from "next/link";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -19,52 +17,31 @@ export default function DashboardPage() {
     monthlyExpense,
     categoryBreakdown,
     loading: dashLoading,
-    refetch,
   } = useDashboard();
   const { transactions: recentTx, loading: txLoading } = useTransactions({
     limit: 5,
   });
 
   const now = new Date();
-  const greeting = getGreeting();
 
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-text-secondary text-sm">{greeting}</p>
-          <h1 className="text-lg font-bold text-text-primary">
-            {user?.user_metadata?.display_name ||
-              user?.email?.split("@")[0] ||
-              "ผู้ใช้"}
-          </h1>
-        </div>
-        <Link
-          href="/settings"
-          className="w-10 h-10 rounded-full bg-bg-card border border-border flex items-center justify-center hover:border-accent transition-colors"
-        >
-          <Settings className="w-5 h-5 text-text-secondary" />
-        </Link>
+      <div>
+        <p style={{ color: "#94a3b8", fontSize: "13px" }}>{getGreeting()}</p>
+        <h1 className="text-xl font-bold" style={{ color: "#f1f5f9" }}>
+          {user?.user_metadata?.display_name ||
+            user?.email?.split("@")[0] ||
+            "ผู้ใช้"}
+        </h1>
       </div>
 
-      {/* Month indicator */}
-      <p className="text-text-secondary text-xs">{formatMonthYear(now)}</p>
+      {/* Month */}
+      <p style={{ color: "#64748b", fontSize: "12px" }}>{formatMonthYear(now)}</p>
 
-      {/* Balance */}
       <BalanceCard balance={totalBalance} loading={dashLoading} />
-
-      {/* Income/Expense Summary */}
-      <SummaryCards
-        income={monthlyIncome}
-        expense={monthlyExpense}
-        loading={dashLoading}
-      />
-
-      {/* Donut Chart */}
+      <SummaryCards income={monthlyIncome} expense={monthlyExpense} loading={dashLoading} />
       <DonutChart data={categoryBreakdown} loading={dashLoading} />
-
-      {/* Recent Transactions */}
       <RecentTransactions transactions={recentTx} loading={txLoading} />
     </div>
   );

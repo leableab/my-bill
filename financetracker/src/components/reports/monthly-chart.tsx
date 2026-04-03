@@ -1,16 +1,15 @@
 "use client";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { Skeleton } from "@/components/ui/skeleton";
+import dynamic from "next/dynamic";
 import { formatCurrency } from "@/lib/format";
+
+const BarChart = dynamic(() => import("recharts").then((m) => m.BarChart), { ssr: false });
+const Bar = dynamic(() => import("recharts").then((m) => m.Bar), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((m) => m.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((m) => m.YAxis), { ssr: false });
+const CartesianGrid = dynamic(() => import("recharts").then((m) => m.CartesianGrid), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((m) => m.Tooltip), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then((m) => m.ResponsiveContainer), { ssr: false });
 
 interface MonthlyChartProps {
   data: { month: string; income: number; expense: number }[];
@@ -20,16 +19,47 @@ interface MonthlyChartProps {
 export function MonthlyChart({ data, loading }: MonthlyChartProps) {
   if (loading) {
     return (
-      <div className="rounded-xl bg-bg-card border border-border p-4">
-        <Skeleton className="h-5 w-40 mb-4" />
-        <Skeleton className="h-52 w-full" />
+      <div
+        style={{
+          background: "#131320",
+          border: "1px solid #2a2a4a",
+          borderRadius: "16px",
+          padding: "20px",
+        }}
+      >
+        <div
+          style={{
+            height: "20px",
+            width: "160px",
+            background: "#1a1a2e",
+            borderRadius: "10px",
+            marginBottom: "16px",
+            animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          }}
+        />
+        <div
+          style={{
+            height: "208px",
+            width: "100%",
+            background: "#1a1a2e",
+            borderRadius: "12px",
+            animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+          }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl bg-bg-card border border-border p-4">
-      <h3 className="text-sm font-semibold text-text-primary mb-4">
+    <div
+      style={{
+        background: "#131320",
+        border: "1px solid #2a2a4a",
+        borderRadius: "16px",
+        padding: "20px",
+      }}
+    >
+      <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#f1f5f9", marginBottom: "16px" }}>
         รายรับ-รายจ่าย 6 เดือน
       </h3>
       <ResponsiveContainer width="100%" height={220}>
@@ -57,7 +87,7 @@ export function MonthlyChart({ data, loading }: MonthlyChartProps) {
           <Tooltip
             contentStyle={{
               background: "#131320",
-              border: "1px solid #1e1e3a",
+              border: "1px solid #2a2a4a",
               borderRadius: 8,
               color: "#f1f5f9",
             }}
@@ -83,14 +113,14 @@ export function MonthlyChart({ data, loading }: MonthlyChartProps) {
           />
         </BarChart>
       </ResponsiveContainer>
-      <div className="flex justify-center gap-6 mt-2">
-        <div className="flex items-center gap-2 text-xs">
-          <div className="w-3 h-3 rounded-sm bg-success" />
-          <span className="text-text-secondary">รายรับ</span>
+      <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginTop: "8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
+          <div style={{ width: 12, height: 12, borderRadius: "2px", background: "#22c55e" }} />
+          <span style={{ color: "#94a3b8" }}>รายรับ</span>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <div className="w-3 h-3 rounded-sm bg-danger" />
-          <span className="text-text-secondary">รายจ่าย</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px" }}>
+          <div style={{ width: 12, height: 12, borderRadius: "2px", background: "#ef4444" }} />
+          <span style={{ color: "#94a3b8" }}>รายจ่าย</span>
         </div>
       </div>
     </div>
